@@ -7,6 +7,15 @@ SystemLanguageModelChat is a demonstration project built on Apple's newly introd
 > - **Xcode 16 beta or later**
 > - **iOS 26** (currently available via developer beta)
 
+## 📸 Screenshots
+
+<p align="center">
+  <img src="Screenshot/1.jpg" alt="Screenshot 1" width="300" />
+  <img src="Screenshot/2.jpg" alt="Screenshot 2" width="300" />
+  <img src="Screenshot/3.jpg" alt="Screenshot 3" width="300" />
+  <img src="Screenshot/4.jpg" alt="Screenshot 4" width="300" />
+</p>
+
 ## Features
 
 - Minimal and focused implementation for invoking Foundation Models
