@@ -10,10 +10,10 @@ SystemLanguageModelChat is a demonstration project built on Apple's newly introd
 ## 📸 Screenshots
 
 <p align="center">
-  <img src="Screenshot/1.jpg" alt="Screenshot 1" width="300" />
-  <img src="Screenshot/2.jpg" alt="Screenshot 2" width="300" />
-  <img src="Screenshot/3.jpg" alt="Screenshot 3" width="300" />
-  <img src="Screenshot/4.jpg" alt="Screenshot 4" width="300" />
+  <img src="Screenshot/1.PNG" alt="Screenshot 1" width="250" />
+  <img src="Screenshot/2.PNG" alt="Screenshot 2" width="250" />
+  <img src="Screenshot/3.PNG" alt="Screenshot 3" width="250" />
+  <img src="Screenshot/4.PNG" alt="Screenshot 4" width="250" />
 </p>
 
 ## Features
