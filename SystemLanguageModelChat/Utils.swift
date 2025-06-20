@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FoundationModels
 
 struct FlowingRainbowBackground: View {
     @State private var currentGradientIndex = 0
@@ -45,10 +46,41 @@ struct FlowingRainbowBackground: View {
     }
 }
 
+#if canImport(UIKit)
+extension View {
+    func hideKeyboard() {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
+                                        to: nil, from: nil, for: nil)
+    }
+}
+#endif
 
-func getLocalizedMonthDayWeekday(date: Date = Date()) -> String {
+#if canImport(FoundationModels)
+extension SystemLanguageModel {
+    static var modelAvailableStatus: LocalizedStringResource {
+        switch SystemLanguageModel.default.availability {
+        case .available:
+            "Apple Intelligence is available"
+        case .unavailable(.deviceNotEligible):
+            "Apple Intelligence is not supported on this device"
+            // Show an alternative UI.
+        case .unavailable(.appleIntelligenceNotEnabled):
+            "Apple Intelligence is not turned on"
+            // Ask the person to turn on Apple Intelligence.
+        case .unavailable(.modelNotReady):
+            "Apple Intelligence is not ready yet"
+            // The model isn't ready because it's downloading or because of other system reasons.
+        case .unavailable(_):
+            "Apple Intelligence is unavailable"
+            // The model is unavailable for an unknown reason.
+        }
+    }
+}
+#endif
+
+func getLocalizedMonthDayWeekday(date: Date = Date(), locale: Locale = .current) -> String {
     let dateFormatter = DateFormatter()
-    dateFormatter.locale = .init(identifier: "en-US")
+    dateFormatter.locale = .init(identifier: locale.language.languageCode == .chinese ? "zh-CN" : "en-US")
     dateFormatter.setLocalizedDateFormatFromTemplate("MMMMd")
     let monthDayString = dateFormatter.string(from: date)
 

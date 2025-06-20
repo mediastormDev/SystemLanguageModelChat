@@ -6,29 +6,21 @@
 //
 
 import SwiftUI
-import FoundationModels
 
 struct ChatView: View {
     
-    @ObservedObject var chatManager: ChatViewModel = .shared
+    @ObservedObject var viewModel: ChatViewModel
     
-    let session: LanguageModelSession
+    var chat: Chat {
+        viewModel.chat
+    }
     
-    @State var chat: Chat
-    
-    @State var generating: Bool = false
-    @State var message: String = ""
-    
-    @State var welcomeMessage: String = ""
-    
-    let todayDate = getLocalizedMonthDayWeekday()
-    
-    init(chat: Chat) {
-        self.chat = chat
-        self.session = if let trasncript = chat.modelTrasncript {
-            LanguageModelSession(transcript: trasncript)
-        } else {
-            LanguageModelSession()
+    var bindingTitle: Binding<String> {
+        .init {
+            viewModel.chat.title ?? .init(localized: "New Chat")
+        } set: { title in
+            viewModel.chat.title = title
+            viewModel.save()
         }
     }
     
@@ -43,9 +35,13 @@ struct ChatView: View {
                                     Spacer(minLength: 0)
                                 }
                                 VStack(alignment: message.role == .ai ? .leading : .trailing) {
-                                    Text(message.role.title)
-                                        .textSelection(.enabled)
-                                        .font(.caption.weight(.bold))
+                                    HStack(spacing: 3) {
+                                        if message.role == .ai {
+                                            Image(systemName: "apple.intelligence")
+                                        }
+                                        Text(message.role.title)
+                                    }
+                                    .font(.caption.weight(.bold))
                                     VStack(alignment: .leading){
                                         Text(LocalizedStringKey(message.text))
                                             .textSelection(.enabled)
@@ -96,6 +92,15 @@ struct ChatView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.horizontal)
+                    .background{
+                        GeometryReader { geometry in
+                            Color.clear
+                                .onChange(of: geometry.frame(in: .global)) { _, _ in
+                                    guard !viewModel.generating else { return }
+                                    hideKeyboard()
+                                }
+                        }
+                    }
                     .onAppear{
                         proxy.scrollTo("bottom", anchor: .bottom)
                     }
@@ -106,10 +111,10 @@ struct ChatView: View {
                     .overlay {
                         if chat.messages.isEmpty {
                             VStack(spacing: 0){
-                                Text(todayDate)
+                                Text(viewModel.todayDate)
                                     .font(.headline)
                                     .foregroundStyle(.secondary)
-                                Text(LocalizedStringKey(welcomeMessage))
+                                Text(LocalizedStringKey(viewModel.welcomeMessage))
                                     .font(.title2)
                                     .multilineTextAlignment(.center)
                                     .padding()
@@ -117,98 +122,44 @@ struct ChatView: View {
 //                            .animation(.default, value: welcomeMessage)
                         }
                     }
-                TextField("Input your message...", text: $message)
-                    .font(.subheadline)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 50)
-                    .clipShape(.capsule)
-                    .glassEffect()
-                    .padding(.horizontal)
-                    .padding(.vertical, 5)
-                    .background(content: {
-                        LinearGradient(colors: [.clear, .init(uiColor: .systemBackground)], startPoint: .top, endPoint: .bottom)
-                            .ignoresSafeArea()
-                    })
-                    .onSubmit {
-                        Task {
-                            await send()
+                Group{
+                    if viewModel.available {
+                        TextField("Input your message...", text: $viewModel.message)
+                            .font(.subheadline)
+                            .padding()
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 50)
+                            .clipShape(.capsule)
+                            .glassEffect()
+                            .onSubmit {
+                                Task {
+                                    await viewModel.send()
+                                }
+                            }
+                    } else {
+                        HStack(spacing: 3){
+                            Spacer()
+                            Image(systemName: "apple.intelligence")
+                            Text(viewModel.modelStatus)
+                            Spacer()
                         }
+                        .foregroundStyle(.red)
                     }
+                    
+                }
+                .padding(.horizontal)
+                .padding(.vertical, 5)
+                .background(content: {
+                    LinearGradient(colors: [.clear, .init(uiColor: .systemBackground)], startPoint: .top, endPoint: .bottom)
+                        .ignoresSafeArea()
+                })
             }
         }
-        .navigationTitle($chat.title)
+        .navigationTitle(bindingTitle)
+        .navigationSubtitle(viewModel.available ? viewModel.modelStatus : "")
         .navigationBarTitleDisplayMode(.inline)
-        .task {
-            await welconeMessage()
-        }
-        .onChange(of: chat) { _, newValue in
-            self.chatManager.updateChat(newValue)
-        }
-    }
-    
-    func welconeMessage() async {
-        let session = LanguageModelSession() // Use different session from chat to eliminate contextual effects
-        let stream = session.streamResponse(to: "Generate a greeting suitable for starting a casual chat with someone. It should not exceed 15 words, the tone should be natural and friendly, and the content should be random." )
-        do {
-            for try await partialResponse in stream {
-                welcomeMessage = partialResponse
-            }
-        } catch {
-            print(error)
-            welcomeMessage = "Hello! How can I assist you?"
-        }
-    }
-    
-    func generateTitle() {
-        Task {
-            guard let message = chat.messages.first else {return}
-            if message.role == .user {
-                let session = LanguageModelSession() // Use different session from chat to eliminate contextual effects
-                let stream = session.streamResponse(to:
-                                                        "User's question：\n\(message.text)\n\nGenerate a suitable conversation title for this question, no more than 10 words, no punctuation, and the preferred language is the user input language"
-                )
-                do {
-                    for try await partialResponse in stream {
-                        chat.title = partialResponse
-                    }
-                } catch {
-                    print(error)
-                }
-            }
-        }
-    }
-    
-    func send() async {
-        guard message != "", !generating else { return }
-        let userMessage: Message = .init(text: .init(message), role: .user)
-        chat.messages.append(userMessage)
-        if chat.messages.count == 1 {
-            generateTitle()
-        }
-        var aiMessage: Message = .init(text: "Thinking...", role: .ai)
-        do {
-            let stream = session.streamResponse(to: message)
-            aiMessage.responding = true
-            chat.messages.append(aiMessage)
-            message = ""
-            generating = true
-            for try await partialResponse in stream {
-                if let index = chat.messages.firstIndex(where: {$0.id == aiMessage.id}){
-                    chat.messages[index].text = .init(partialResponse)
-                }
-            }
-            generating = false
-            if let index = chat.messages.firstIndex(where: {$0.id == aiMessage.id}){
-                chat.messages[index].responding = false
-            }
-        } catch {
-            print(error)
-            generating = false
-            if let index = chat.messages.firstIndex(where: {$0.id == aiMessage.id && $0.role == .ai}){
-                chat.messages[index].error = "\(error)"
-                chat.messages[index].responding = false
-            }
+        .onAppear() {
+            viewModel.generateWelcomeMessage()
         }
     }
 }

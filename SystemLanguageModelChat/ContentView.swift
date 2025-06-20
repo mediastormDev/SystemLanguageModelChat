@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ContentView: View {
     
-    @ObservedObject var chatManager: ChatViewModel = .shared
+    @ObservedObject var chatManager: ChatManager = .shared
     
     @State private var path: NavigationPath = .init()
     var chats: [Chat] {
@@ -19,31 +19,49 @@ struct ContentView: View {
     var body: some View {
         NavigationStack(path: $path) {
             List {
-                ForEach(chats, id: \.id) { chat in
-                    Button {
-                        path.append(chat)
-                    } label: {
-                        VStack(alignment: .leading) {
-                            HStack {
-                                Text(chat.title)
-                                    .font(.headline)
-                                Spacer()
-                                Text(chat.lastUpdatedAt, style: .time)
-                                    .font(.footnote)
-                                    .foregroundStyle(.secondary)
+                
+                Section {
+                    ForEach(chats, id: \.id) { chat in
+                        Button {
+                            path.append(chat)
+                        } label: {
+                            VStack(alignment: .leading) {
+                                HStack {
+                                    Text(chat.title ?? String(localized: "New Chat"))
+                                        .font(.headline)
+                                    Spacer()
+                                    Text(chat.lastUpdatedAt, style: .time)
+                                        .font(.footnote)
+                                        .foregroundStyle(.secondary)
+                                }
+                                if let lastMessage = chat.lastMessage {
+                                    Text(lastMessage.text)
+                                        .font(.subheadline)
+                                        .foregroundStyle(.secondary)
+                                        .lineLimit(1)
+                                        .truncationMode(.tail)
+                                }
                             }
-                            if let lastMessage = chat.lastMessage {
-                                Text(lastMessage.text)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                                    .lineLimit(1)
-                                    .truncationMode(.tail)
-                            }
+                            .contentShape(Rectangle())
                         }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
+                    .onDelete(perform: deleteChats)
+                } footer: {
+                    HStack{
+                        Spacer()
+                        HStack(spacing: 3){
+                            Image(systemName: "apple.intelligence")
+                            Text("Apple Intelligence")
+                        }
+                        .font(.footnote)
+                        Spacer()
+                    }
+                    
                 }
-                .onDelete(perform: deleteChats)
+                
+                
+                
             }
             .overlay{
                 if chats.isEmpty {
@@ -62,9 +80,10 @@ struct ContentView: View {
                 }
             }
             .navigationTitle("Chats")
+            .navigationSubtitle("Chat with Apple Intelligence")
             .navigationBarItems(trailing: createChatButton)
             .navigationDestination(for: Chat.self) { chat in
-                ChatView(chat: chat)
+                ChatView(viewModel: .init(chat: chat))
             }
         }
     }

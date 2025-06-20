@@ -10,7 +10,7 @@ import FoundationModels
 
 struct Chat: Codable, Equatable, Hashable {
     var id: UUID = UUID()
-    var title: String = "New Chat"
+    var title: String?
     var messages: [Message] = []
     var createdAt: Date = Date()
     var lastUpdatedAt: Date = Date()
@@ -33,7 +33,7 @@ struct Message: Codable, Hashable {
         case ai
         case user
         
-        var title: String {
+        var title: LocalizedStringResource {
             switch self {
             case .ai:
                 return "System Language Model"
@@ -45,6 +45,7 @@ struct Message: Codable, Hashable {
     
     var id: UUID = UUID()
     var text: String
+    var time: Date = Date()
     var error: String?
     let role: Role
     var responding: Bool = false

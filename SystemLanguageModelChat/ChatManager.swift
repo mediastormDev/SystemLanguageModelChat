@@ -1,5 +1,5 @@
 //
-//  ChatViewModel.swift
+//  ChatManager.swift
 //  SystemLanguageModelChat
 //
 //  Created by Jerry Zhu on 2025/6/19.
@@ -8,9 +8,9 @@
 import SwiftUI
 import Combine
 
-class ChatViewModel: ObservableObject {
+class ChatManager: ObservableObject {
     
-    static let shared = ChatViewModel()
+    static let shared = ChatManager()
     
     @Published var chats: [Chat] = []
     
@@ -19,10 +19,9 @@ class ChatViewModel: ObservableObject {
     private init() {
         Task {
             createChatsDirectoryIfNeeded()
-            chats = loadAllChats().sorted(by: {$0.lastUpdatedAt > $1.lastUpdatedAt})
+            loadAllChats()
             isLoadingChats = false
         }
-       
     }
 
     private let fileManager = FileManager.default
@@ -42,7 +41,7 @@ class ChatViewModel: ObservableObject {
         if let index = chats.firstIndex(where: {$0.id == chat.id}) {
             chats[index] = chat
         } else {
-            chats.append(chat)
+            chats.insert(chat, at: 0)
         }
         Task {
             let url = chatsDirectory.appendingPathComponent("\(chat.id.uuidString).json")
@@ -56,20 +55,19 @@ class ChatViewModel: ObservableObject {
         
     }
 
-    func loadAllChats() -> [Chat] {
-        do {
-            let files = try fileManager.contentsOfDirectory(at: chatsDirectory, includingPropertiesForKeys: nil)
-            var chats: [Chat] = []
-            for url in files where url.pathExtension == "json" {
-                if let chat = loadChat(from: url) {
-                    chats.append(chat)
+    func loadAllChats() {
+            do {
+                let files = try fileManager.contentsOfDirectory(at: chatsDirectory, includingPropertiesForKeys: nil)
+                var chats: [Chat] = []
+                for url in files where url.pathExtension == "json" {
+                    if let chat = loadChat(from: url) {
+                        chats.append(chat)
+                    }
                 }
+                self.chats = chats.sorted(by: {$0.lastUpdatedAt > $1.lastUpdatedAt})
+            } catch {
+                print("❌ Load chats failed: \(error)")
             }
-            return chats
-        } catch {
-            print("❌ Load chats failed: \(error)")
-            return []
-        }
     }
 
     func loadChat(id: UUID) -> Chat? {
@@ -102,7 +100,6 @@ class ChatViewModel: ObservableObject {
         
     }
 
-    // MARK: - 更新 Chat
     func updateChat(_ chat: Chat)  {
         var chat = chat
         chat.lastUpdatedAt = .now
