@@ -80,12 +80,10 @@ extension SystemLanguageModel {
 
 func getLocalizedMonthDayWeekday(date: Date = Date(), locale: Locale = .current) -> String {
     let dateFormatter = DateFormatter()
-    dateFormatter.locale = .init(identifier: locale.language.languageCode == .chinese ? "zh-CN" : "en-US")
-    dateFormatter.setLocalizedDateFormatFromTemplate("MMMMd")
-    let monthDayString = dateFormatter.string(from: date)
-
-    dateFormatter.setLocalizedDateFormatFromTemplate("EEEE")
-    let weekdayString = dateFormatter.string(from: date)
+    dateFormatter.locale = locale
     
-    return "\(monthDayString)  \(weekdayString)"
+    // 组合月日 + 星期，系统将根据 locale 自动排序、翻译格式
+    dateFormatter.setLocalizedDateFormatFromTemplate("MMMMd EEEE")
+    
+    return dateFormatter.string(from: date)
 }
