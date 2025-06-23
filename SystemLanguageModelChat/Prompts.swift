@@ -14,7 +14,7 @@ func welcomeMessagePrompt() -> String {
 func generateChatTitlePrompt(userMessage: String) -> String {
 //    String(localized: "Title generation prompt for message \(userMessage)")
         """
-        Given the following user message, generate a concise and informative conversation title in the **same language** as the user message. Only return the title itself — do not include any labels, prefixes, or punctuation.
+        Given the following user message, generate a concise and informative conversation title in the same language as the user message. Only return the title itself — do not include any labels, prefixes, or punctuation.
                                                                 
         User message: \(userMessage)
         """

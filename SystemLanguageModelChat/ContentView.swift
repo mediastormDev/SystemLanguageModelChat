@@ -19,7 +19,6 @@ struct ContentView: View {
     var body: some View {
         NavigationStack(path: $path) {
             List {
-                
                 Section {
                     ForEach(chats, id: \.id) { chat in
                         Button {
@@ -30,7 +29,7 @@ struct ContentView: View {
                                     Text(chat.title ?? String(localized: "New Chat"))
                                         .font(.headline)
                                     Spacer()
-                                    Text(chat.lastUpdatedAt, style: .time)
+                                    Text(getLocalizedTimestamp(from: chat.lastUpdatedAt))
                                         .font(.footnote)
                                         .foregroundStyle(.secondary)
                                 }
@@ -48,20 +47,18 @@ struct ContentView: View {
                     }
                     .onDelete(perform: deleteChats)
                 } footer: {
-                    HStack{
-                        Spacer()
-                        HStack(spacing: 3){
-                            Image(systemName: "apple.intelligence")
-                            Text("Apple Intelligence")
+                    if !chatManager.chats.isEmpty {
+                        HStack{
+                            Spacer()
+                            HStack(spacing: 3){
+                                Image(systemName: "apple.intelligence")
+                                Text("Apple Intelligence")
+                            }
+                            .font(.footnote)
+                            Spacer()
                         }
-                        .font(.footnote)
-                        Spacer()
                     }
-                    
                 }
-                
-                
-                
             }
             .overlay{
                 if chats.isEmpty {

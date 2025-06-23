@@ -310,13 +310,13 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "消息列表"
+            "value" : "聊天列表"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "訊息列表"
+            "value" : "聊天列表"
           }
         }
       }
@@ -350,13 +350,13 @@
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "新建消息"
+            "value" : "新建聊天"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "建立新訊息"
+            "value" : "建立新聊天"
           }
         }
       }
@@ -654,43 +654,43 @@
         "de" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Erstellen Sie eine freundliche Begrüßung für den Chatstart. Maximal 15 Zeichen, freundlicher Ton, zufälliger Inhalt."
+            "value" : "Generieren Sie eine Begrüßung, die geeignet ist, um ein zwangloses Gespräch mit jemandem zu beginnen. Es sollten etwa 15 Wörter sein, der Ton sollte natürlich und freundlich sein, und der Inhalt sollte zufällig sein."
           }
         },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Generate a greeting suitable for starting a casual chat with someone. It should not exceed 15 words, the tone should be natural and friendly, and the content should be random."
+            "value" : "Generate a greeting suitable for starting a casual chat with someone. It should be about 15 words, the tone should be natural and friendly, and the content should be random."
           }
         },
         "fr" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Générez un message de salutation pour commencer une discussion. Maximum 15 caractères, ton naturel et amical, contenu aléatoire."
+            "value" : "Générez une salutation adaptée pour commencer une conversation informelle avec quelqu'un. Il devrait y avoir environ 15 mots, le ton doit être naturel et amical, et le contenu doit être aléatoire."
           }
         },
         "ja" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "カジュアルなチャットを始めるのに適した挨拶を生成してください。15文字以内で自然かつ親しみやすく、内容はランダムにしてください。"
+            "value" : "誰かとカジュアルなチャットを始めるのに適した挨拶を生成します。約15語で、口調は自然で親しみやすく、内容はランダムである必要があります。"
           }
         },
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "상대방과의 대화를 시작할 수 있는 인사말을 생성하세요. 15자 이내로 자연스럽고 친근하게, 무작위로 생성됩니다."
+            "value" : "누군가와 캐주얼한 채팅을 시작하기에 적합한 인사말을 생성합니다. 약 15개의 단어여야 하고, 어조는 자연스럽고 친근해야 하며, 내용은 무작위여야 합니다."
           }
         },
         "zh-Hans" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "生成一条与他人开启聊天的问候语。长度不应超过15个字，语气应自然友好，内容随机。"
+            "value" : "生成一条与他人开启聊天的问候语。15个字左右，语气应自然友好，内容随机。"
           }
         },
         "zh-Hant" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "生成一條與他人展開聊天的問候語。長度不應超過15個字，語氣自然親切，內容隨機。"
+            "value" : "生成一條與他人展開聊天的問候語。長度15個字左右，語氣自然親切，內容隨機。"
           }
         }
       }

@@ -82,8 +82,29 @@ func getLocalizedMonthDayWeekday(date: Date = Date(), locale: Locale = .current)
     let dateFormatter = DateFormatter()
     dateFormatter.locale = locale
     
-    // 组合月日 + 星期，系统将根据 locale 自动排序、翻译格式
     dateFormatter.setLocalizedDateFormatFromTemplate("MMMMd EEEE")
     
     return dateFormatter.string(from: date)
+}
+
+func getLocalizedTimestamp(from date: Date, locale: Locale = .current, calendar: Calendar = .current) -> String {
+    let now = Date()
+    let dateFormatter = DateFormatter()
+    dateFormatter.locale = locale
+    dateFormatter.calendar = calendar
+
+    let isToday = calendar.isDateInToday(date)
+    let isSameYear = calendar.component(.year, from: date) == calendar.component(.year, from: now)
+
+    if isToday {
+        dateFormatter.timeStyle = .short
+        dateFormatter.dateStyle = .none
+        return dateFormatter.string(from: date)
+    } else if isSameYear {
+        dateFormatter.setLocalizedDateFormatFromTemplate("MMMdHmm") // 自动排序 + 本地化
+        return dateFormatter.string(from: date)
+    } else {
+        dateFormatter.setLocalizedDateFormatFromTemplate("yMMMdHmm")
+        return dateFormatter.string(from: date)
+    }
 }
