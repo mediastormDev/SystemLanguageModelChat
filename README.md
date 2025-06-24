@@ -4,7 +4,7 @@ SystemLanguageModelChat is a demonstration project built on Apple's newly introd
 
 > ⚠️ This demo requires:
 > - A real device with support for **Apple Intelligence**
-> - **Xcode 16 beta or later**
+> - **Xcode 26 beta or later**
 > - **iOS 26** (currently available via developer beta)
 
 ## 📸 Screenshots
