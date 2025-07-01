@@ -43,7 +43,7 @@ class ChatViewModel: ObservableObject {
     func generateWelcomeMessage() {
         Task {
             let session = LanguageModelSession() // Use different session from chat to eliminate contextual effects
-            let stream = session.streamResponse(to: welcomeMessagePrompt())
+            let stream = session.streamResponse(to: welcomeMessagePrompt)
             do {
                 for try await partialResponse in stream {
                     welcomeMessage = partialResponse
@@ -58,8 +58,8 @@ class ChatViewModel: ObservableObject {
     
     func generateTitle() async {
         guard let message = chat.messages.first(where: {$0.role == .user}) else {return}
-        let session = LanguageModelSession() // Use different session from chat to eliminate contextual effects
-        let stream = session.streamResponse(to: generateChatTitlePrompt(userMessage: message.text))
+        let session = LanguageModelSession(instructions: titleInstructionsPrompt) // Use different session from chat to eliminate contextual effects
+        let stream = session.streamResponse(to: message.text)
         do {
             for try await partialResponse in stream {
                 chat.title = partialResponse
@@ -76,7 +76,7 @@ class ChatViewModel: ObservableObject {
         if chat.title == nil {
             await generateTitle()
         }
-        var aiMessage: Message = .init(text: "", role: .ai)
+        var aiMessage: Message = .init(text: String(localized: "Thinking..."), role: .ai)
         do {
             let stream = session.streamResponse(to: message)
             aiMessage.responding = true

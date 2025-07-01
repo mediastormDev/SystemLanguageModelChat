@@ -101,7 +101,7 @@ func getLocalizedTimestamp(from date: Date, locale: Locale = .current, calendar:
         dateFormatter.dateStyle = .none
         return dateFormatter.string(from: date)
     } else if isSameYear {
-        dateFormatter.setLocalizedDateFormatFromTemplate("MMMdHmm") // 自动排序 + 本地化
+        dateFormatter.setLocalizedDateFormatFromTemplate("MMMdHmm")
         return dateFormatter.string(from: date)
     } else {
         dateFormatter.setLocalizedDateFormatFromTemplate("yMMMdHmm")

@@ -12,6 +12,7 @@ struct ContentView: View {
     @ObservedObject var chatManager: ChatManager = .shared
     
     @State private var path: NavigationPath = .init()
+    
     var chats: [Chat] {
         chatManager.chats
     }
@@ -61,7 +62,10 @@ struct ContentView: View {
                 }
             }
             .overlay{
-                if chats.isEmpty {
+                if chatManager.isLoadingChats {
+                    ProgressView()
+                }
+                else if chats.isEmpty {
                     VStack {
                         Text("No chats yet")
                             .font(.title2)
@@ -73,7 +77,6 @@ struct ContentView: View {
                         }
                         .buttonStyle(.bordered)
                     }
-                    
                 }
             }
             .navigationTitle("Chats")

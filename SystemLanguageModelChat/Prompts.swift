@@ -7,15 +7,6 @@
 
 import Foundation
 
-func welcomeMessagePrompt() -> String {
-    String(localized: "Welcome message generation prompt")
-}
+let welcomeMessagePrompt = String(localized: "Welcome message generation prompt")
 
-func generateChatTitlePrompt(userMessage: String) -> String {
-//    String(localized: "Title generation prompt for message \(userMessage)")
-        """
-        Given the following user message, generate a concise and informative conversation title in the same language as the user message. Only return the title itself — do not include any labels, prefixes, or punctuation.
-                                                                
-        User message: \(userMessage)
-        """
-}
+let titleInstructionsPrompt = "You are a title generator, your job is generating a concise and informative conversation title in the SAME LANGUAGE as the given user message. Only return the title itself — DO NOT include any labels, prefixes, or punctuation."
